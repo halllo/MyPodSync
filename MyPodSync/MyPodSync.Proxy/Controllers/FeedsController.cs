@@ -18,7 +18,7 @@ namespace MyPodSync.Proxy.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetFeeds(CancellationToken cancellationToken)
         {
             var dir = share.GetDirectoryClient("files");
             var filesAndDirsRequest = dir.GetFilesAndDirectoriesAsync(cancellationToken: cancellationToken);
@@ -30,13 +30,14 @@ namespace MyPodSync.Proxy.Controllers
                 feeds = files.Select(f => new
                 {
                     f.Name,
+                    Link = $"{Request.Scheme}://{Request.Host}{Request.PathBase}/feeds/{f.Name}",
                 })
             });
         }
 
         [HttpGet]
         [Route("{feed}")]
-        public async Task<IActionResult> Get(string feed, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetFeed(string feed, CancellationToken cancellationToken)
         {
             ValidatePath(feed);
 
@@ -56,7 +57,7 @@ namespace MyPodSync.Proxy.Controllers
 
         [HttpGet]
         [Route("{feed}/{enclosure}")]
-        public async Task<IActionResult> Get(string feed, string enclosure, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetEnclosure(string feed, string enclosure, CancellationToken cancellationToken)
         {
             ValidatePath(feed, enclosure);
 
