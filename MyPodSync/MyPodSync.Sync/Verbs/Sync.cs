@@ -18,8 +18,7 @@ namespace MyPodSync.Sync.Verbs
 
             foreach (var sourceFile in Directory
                 .GetFiles(SourceFolder, "*.*", SearchOption.AllDirectories)
-                .Select(f => new FileInfo(f))
-                .Skip(14))
+                .Select(f => new FileInfo(f)))
             {
                 logger.LogDebug($"Uploading {sourceFile.Name}...");
 
