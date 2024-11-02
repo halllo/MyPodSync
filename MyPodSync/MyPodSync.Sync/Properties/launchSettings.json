@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MyPodSync.Sync": {
+      "commandName": "Project",
+      "commandLineArgs": "sync --source \"D:\\MyPodSync\\acishare\\files\""
+    }
+  }
+}

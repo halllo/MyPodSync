@@ -1,6 +1,6 @@
 # MyPodSync
 
-Utilizing [Podsync](https://github.com/mxpv/podsync).
+Experimenting with [Podsync](https://github.com/mxpv/podsync).
 
 ## Configuration
 
@@ -31,6 +31,8 @@ vimeo = "..."
 ## Runtime
 
 ### Azure Container Instance
+
+Podsync includes a webserver. When hosted at a publicly available ACI, the feeds are available at <http://....azurecontainer.io/ManuelsChannel.xml>
 
 ```powershell
 # Get-ExecutionPolicy
@@ -111,3 +113,17 @@ Unfortunately it still didn't work for my Azure Container Instance so I fell bac
 ```powershell
 podman run -p 5055:8080 --rm -it -v D:\MyPodSync\acishare:/app/data/ -e "PODSYNC_CONFIG_PATH=/app/data/config.toml" ghcr.io/mxpv/podsync:latest
 ```
+
+### Public Accessibility
+
+Podsync stores the downloaded files locally. From here we copy them into an Azure Storage File Share via the CLI.
+
+```powershell
+MyPodSync.Sync.exe sync --source "D:\MyPodSync\acishare\files"
+```
+
+(The StorageAccount ConnectionString is provided in the `appsettings.json`.)
+
+Finally we host `MyPodSync.Proxy` inside an Azure App Service as a webserver in front of the Azure Storage File Share. That makes the feeds available at <https://....azurewebsites.net/feeds>. Here we could also enforce authentication, but at the moment it is unclear how the different podcast apps behave being prompted for authentication.
+
+The cryptic Azure App Service subdomain postfix will suffice to hide the publicly accessible API and content.

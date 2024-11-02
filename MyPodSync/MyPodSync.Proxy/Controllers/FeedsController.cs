@@ -47,6 +47,7 @@ namespace MyPodSync.Proxy.Controllers
             try
             {
                 var stream = await file.OpenReadAsync();
+                this._logger.LogInformation("Loading {feed}", feed);
                 return new FileStreamResult(stream, new MediaTypeHeaderValue("application/rss+xml"));
             }
             catch (Exception)
@@ -62,12 +63,14 @@ namespace MyPodSync.Proxy.Controllers
             ValidatePath(feed, enclosure);
 
             var dir = share.GetDirectoryClient("files");
-            var file = dir.GetFileClient($"{Path.GetFileNameWithoutExtension(feed)}/{enclosure}");
+            var feedFolder = Path.GetFileNameWithoutExtension(feed);
+            var file = dir.GetFileClient($"{feedFolder}/{enclosure}");
 
             try
             {
                 var properties = await file.GetPropertiesAsync(cancellationToken: cancellationToken);
                 var stream = await file.OpenReadAsync();
+                this._logger.LogInformation("Loading {feed}/{enclosure}", feedFolder, enclosure);
                 return new FileStreamResult(stream, new MediaTypeHeaderValue("audio/mpeg"));
 
             }
