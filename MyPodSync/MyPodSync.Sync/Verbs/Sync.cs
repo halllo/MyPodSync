@@ -12,7 +12,7 @@ namespace MyPodSync.Sync.Verbs
         [Option('s', longName: "source", Required = true)]
         public string SourceFolder { get; set; } = null!;
 
-        public async Task Do(ILogger<Forget> logger, ShareClient share)
+        public async Task Do(ILogger<Sync> logger, ShareClient share)
         {
             var dir = share.GetDirectoryClient("files");
 
@@ -37,7 +37,7 @@ namespace MyPodSync.Sync.Verbs
                     var fileExists = (await file.ExistsAsync()).Value;
                     if (!fileExists || (await file.GetPropertiesAsync()).Value.ContentLength != sourceFile.Length)
                     {
-                        using var targetStream = file.OpenWrite(false, 0, new ShareFileOpenWriteOptions { MaxSize = sourceFile.Length });
+                        using var targetStream = file.OpenWrite(true, 0, new ShareFileOpenWriteOptions { MaxSize = sourceFile.Length });
                         using var sourceStream = sourceFile.OpenRead();
                         await sourceStream.CopyToAsync(targetStream);
                         logger.LogInformation($"Uploaded {Spectre.Console.Emoji.Known.PageFacingUp} {sourceFile.Name} ({new PrettySize(sourceFile.Length)})");
